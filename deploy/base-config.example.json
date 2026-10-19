@@ -1,0 +1,8 @@
+{
+  "base_token": "YOUR_BASE_TOKEN",
+  "url": "https://your-tenant.feishu.cn/base/YOUR_BASE_TOKEN",
+  "site_url": "https://research.example.com",
+  "company_id": "juzi",
+  "profile": "juzi-sync",
+  "tables": {}
+}

@@ -1,0 +1,44 @@
+[project]
+name = "compute-policy"
+version = "0.2.0"
+description = "Evidence-first compute subsidy discovery and evaluation workbench"
+requires-python = ">=3.12"
+dependencies = [
+  "beautifulsoup4>=4.13,<5",
+  "fastapi>=0.115,<1",
+  "httpx>=0.28,<1",
+  "pydantic>=2.10,<3",
+  "sqlalchemy>=2.0,<3",
+  "uvicorn>=0.34,<1",
+  "pypdf>=5,<7",
+  "python-docx>=1.1,<2",
+  "openpyxl>=3.1,<4",
+  "ddgs>=9,<10",
+  "playwright>=1.55,<2",
+]
+
+[project.optional-dependencies]
+postgres = ["psycopg[binary]>=3.2,<4"]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.11,<1"]
+
+[project.scripts]
+policy = "compute_policy.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/compute_policy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

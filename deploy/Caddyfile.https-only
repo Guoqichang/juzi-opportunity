@@ -1,0 +1,13 @@
+{
+    auto_https disable_redirects
+}
+
+{$POLICY_DOMAIN} {
+    encode zstd gzip
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+    reverse_proxy web:8766
+}

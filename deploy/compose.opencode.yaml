@@ -1,0 +1,60 @@
+services:
+  web:
+    environment:
+      POLICY_RESEARCH_ENABLED: "1"
+      POLICY_RESEARCH_DAILY_LIMIT: "8"
+  worker:
+    environment:
+      POLICY_OPENCODE_URL: http://opencode:4096
+      POLICY_OPENCODE_PASSWORD_FILE: /run/secrets/opencode-password
+      POLICY_RESEARCH_RESULTS_DIR: /research
+      POLICY_RESEARCH_DAILY_LIMIT: "8"
+    volumes:
+      - ./research:/research
+      - ./secrets/opencode-password:/run/secrets/opencode-password:ro
+    depends_on:
+      opencode:
+        condition: service_healthy
+  opencode:
+    image: juzi-opencode:${POLICY_RELEASE}
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.opencode
+      args:
+        POLICY_RELEASE: ${POLICY_RELEASE}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=512m,mode=1777
+      - /home/policy:size=256m,mode=0700,uid=10001,gid=10001
+    shm_size: 256m
+    mem_limit: 2g
+    cpus: 2
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+    environment:
+      POLICY_BLOCKED_HOSTS: ${POLICY_DOMAIN},${POLICY_SERVER_IP:?set POLICY_SERVER_IP in .env}
+      BUN_INSTALL_CACHE_DIR: /state/bun
+      npm_config_cache: /state/npm
+    volumes:
+      - ./research:/research
+      - ./secrets/opencode-password:/run/secrets/opencode-password:ro
+      - ./secrets/opencode-provider.json:/run/secrets/opencode-provider.json:ro
+      - opencode_state:/state
+      - opencode_workspace:/opt/research
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request,base64,pathlib; p=pathlib.Path('/run/secrets/opencode-password').read_text().strip(); r=urllib.request.Request('http://127.0.0.1:4096/global/health',headers={'Authorization':'Basic '+base64.b64encode(('policy:'+p).encode()).decode()}); urllib.request.urlopen(r,timeout=5)"]
+      interval: 20s
+      timeout: 8s
+      start_period: 90s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+volumes:
+  opencode_state:
+  opencode_workspace:

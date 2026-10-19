@@ -1,0 +1,10 @@
+# Preserve the existing service on port 80. Use TLS-ALPN on 443 for certificates.
+services:
+  web:
+    ports:
+      - "127.0.0.1:18766:8766"
+  gateway:
+    ports: !override
+      - "443:443"
+    volumes:
+      - ./Caddyfile.https-only:/etc/caddy/Caddyfile:ro

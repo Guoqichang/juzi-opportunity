@@ -1,0 +1,7 @@
+# Temporary server verification over SSH only, while the domain/DNS is pending.
+services:
+  gateway:
+    ports: !override
+      - "127.0.0.1:18768:8080"
+    volumes:
+      - ./Caddyfile.staging:/etc/caddy/Caddyfile:ro

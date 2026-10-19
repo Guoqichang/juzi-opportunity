@@ -1,0 +1,10 @@
+[Unit]
+Description=Back up Juzi opportunity database and evidence
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/juzi-opportunity/deploy
+ExecStart=/bin/sh /srv/juzi-opportunity/deploy/backup.sh
+UMask=0077

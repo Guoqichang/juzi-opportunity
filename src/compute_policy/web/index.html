@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>句子机会研究台</title><link rel="stylesheet" href="/assets/style.css"><script defer src="/assets/app.js"></script><script defer src="/assets/features.js"></script></head>
+<body>
+<header><div><span class="eyebrow">句子互动 · 机会研究</span><h1>句子机会研究台</h1><p>持续发现政策、活动与资源，把资料积累成下一步行动。</p></div>
+<div class="header-actions"><label>评估对象<select id="company"><option value="juzi">句子互动</option><option value="demo">演示企业</option></select></label><button id="profile-toggle">编辑公司事实</button><a id="export" class="button" href="/api/export/juzi">导出行动清单</a></div></header>
+<main>
+<div id="notice" role="status" aria-live="polite"></div>
+<nav class="workspace-nav" aria-label="工作区"><button data-workspace="radar" class="active">机会雷达</button><button data-workspace="assessment">证据与评估</button><button data-workspace="reports">定期报告</button><button data-workspace="knowledge">知识与问答</button><button data-workspace="forms">申报准备</button><span id="worker-status" class="muted"></span></nav>
+<section id="workspace-radar"><div id="action-panel" class="panel"><div class="section-head"><div><h2>先推进这几件事</h2><p class="muted">按时效与相关性排出五项行动；资格草稿仍需核对。</p></div><div id="base-status"></div></div><div id="priority-actions" class="candidate-grid"></div><details><summary>来源之间的关系</summary><div id="source-relations"></div></details><div id="sync-attention"></div></div><div class="panel"><div class="section-head"><div><h2>主动寻找与句子相关的机会</h2><p class="muted">不同来源分别保留，标题相似不代表同一事项。批次、地区、资格与报名时间需按各自原文核对。</p></div><button id="discover-now" class="primary">立即发现新机会</button></div>
+<div id="discovery-summary" class="summary-strip"></div><div class="radar-filters"><label>机会类型<select id="candidate-kind"><option value="all">全部线索</option><option value="event">活动 / 路演 / 竞赛</option><option value="compute_support">算力 / 模型券 / 补贴</option><option value="cloud_credit">创业云资源</option><option value="business_support">其他企业支持</option></select></label><label>显示范围<select id="candidate-scope"><option value="current">优先核对招募与政策</option><option value="all">全部（含公示、回顾、资讯）</option></select></label><label>查找<input id="candidate-filter" placeholder="政策、活动名称或关键词"></label></div><div id="candidate-list" class="candidate-grid"></div>
+<details><summary>发现范围与报告节奏</summary><p>默认北京、海淀优先；定期报告保存在工作台。可按业务需要调整主题、排除词和官网栏目。</p><div class="settings-grid"><label>关注主题（逗号分隔）<input id="research-topics"></label><label>排除主题（逗号分隔）<input id="research-exclusions"></label><label>扫描间隔<select id="research-interval"><option value="6">每 6 小时</option><option value="12">每 12 小时</option><option value="24">每天</option></select></label><label>报告节奏<select id="report-mode"><option value="daily_weekly">每日 9 点简报 + 周五汇总</option><option value="daily_changes">每日 9 点变化简报</option><option value="weekly">周五 9 点周报</option></select></label></div><label>搜索词（每行一组；{year} 自动替换为当前年份）<textarea id="research-queries" rows="5"></textarea></label><button id="save-research">保存发现设置</button></details>
+<details><summary>最近运行记录与失败项</summary><div id="research-runs"></div></details></div></section>
+<section id="workspace-reports" hidden><div class="panel"><div class="section-head"><div><h2>定期报告</h2><p class="muted">新增机会、证据变化、疑似截止时间、公司资料缺口和采集失败。报告不会将缺少结果解释为没有机会。</p></div><button id="report-now" class="primary">生成当前报告</button></div><div class="report-layout"><div id="report-list"></div><div><a id="report-download" class="button" hidden>下载 Markdown</a><div id="report-preview" class="document-preview">报告生成后会显示在这里。</div></div></div></div></section>
+<section id="workspace-knowledge" hidden><div class="knowledge-layout"><div class="panel"><h2>带依据的问答</h2><p class="muted">基于已采集原文和句子知识库检索；回答保留引用，不把资料缺口补成确定事实。</p><div class="question-chips"><button data-question="目前有什么与句子相关的新机会？">看新机会</button><button data-question="有哪些人工智能活动值得核对报名？">找活动</button><button data-question="我们能申请哪些算力支持，还缺什么资料？">查资格缺口</button></div><div id="conversation" class="conversation"></div><form id="question-form"><label>你的问题<textarea id="question-text" rows="3" placeholder="例如：这些活动有什么要求？我们还需要补哪些材料？" required></textarea></label><button class="primary">查资料并回答</button></form><h3>逐步补齐公司资料</h3><p class="muted">回答可复用于其他项目。预算保持“估算”；选择“已确认”时必须提供核验依据。</p><div id="followup-list"></div></div>
+<div class="panel"><h2>句子知识库</h2><p class="muted">保存企业介绍、项目材料、资质说明和历史申报经验。知识文本不会直接变成已确认的资格事实。</p><div id="knowledge-list"></div><details id="knowledge-editor"><summary>添加或更新资料</summary><form id="knowledge-form"><input id="knowledge-key" type="hidden"><input id="knowledge-version" type="hidden" value="0"><label>资料名称<input id="knowledge-title" required></label><label>来源或文档链接<input id="knowledge-ref" placeholder="飞书文档链接 / 内部核验记录" required></label><label>资料正文<textarea id="knowledge-body" rows="10" required></textarea></label><label>状态<select id="knowledge-status"><option value="reference">参考资料</option><option value="verified">内容已核对</option><option value="retired">停止使用</option></select></label><button class="primary">保存知识版本</button></form></details></div></div></section>
+<section id="workspace-forms" hidden><div class="panel"><h2>申报准备与预填</h2><p>从已确认的公司事实生成准备草稿，缺失或过期字段保留为空。当前输出是通用准备清单；接入具体平台时，再映射官方字段与附件。</p><form id="prepare-form"><label>选择政策或活动<select id="form-source" required></select></label><button class="primary">生成预填草稿</button></form><div id="form-drafts"></div></div></section>
+<section id="workspace-assessment" hidden>
+<section id="profile" class="panel" hidden><h2>公司事实</h2><p>confirmed 必须有来源；estimate 和 unknown 会保留为资格缺口。金额统一用人民币元，并写清核算期间。</p>
+<label>公司名称<input id="company-name"></label><label>事实 JSON<textarea id="facts" rows="13" spellcheck="false"></textarea></label><button id="save-facts" class="primary">保存事实并重新评估</button></section>
+<section class="stats" id="stats" aria-label="评估概览"></section>
+<div class="layout"><aside class="panel"><div class="section-head"><h2>政策与来源</h2><button id="refresh">刷新</button></div>
+<details><summary>添加政策 URL</summary><form id="source-form"><label>政策标题<input name="title" placeholder="例如：海淀区算力券申报通知"></label><label>公开来源 URL<input name="url" type="url" required placeholder="https://…"></label><label>额外附件域名（逗号分隔）<input name="hosts" placeholder="files.example.gov.cn"></label><button class="primary">登记并排队采集</button></form><p class="muted">需另开终端运行 worker。扫描件与验证页面会进入待核实。</p></details>
+<div id="sources" class="sources"></div>
+<details class="jobs"><summary>最近采集任务</summary><div id="jobs"></div></details>
+</aside>
+<section class="panel detail"><div id="empty"><h2>选择一条政策</h2><p>查看当前判断、条件缺口和每一项引用。</p></div><div id="detail" hidden>
+<div class="section-head"><div><span id="kind" class="eyebrow"></span><h2 id="policy-title"></h2></div><span id="decision" class="badge"></span></div>
+<a id="source-link" target="_blank" rel="noreferrer">查看公开来源 ↗</a><p id="source-health" class="muted"></p>
+<div class="actions"><button id="crawl">重新采集</button><button id="extract">生成条款草稿</button></div>
+<div id="result"></div>
+<div class="tabs" role="tablist"><button class="active" data-tab="evidence">原文证据</button><button data-tab="rules">条款复核</button><button data-tab="history">版本记录</button></div>
+<div id="tab-evidence"><p class="muted">引用由原文版本和段落 ID 定位。下载件按原始字节保存。</p><div id="warnings"></div><div id="evidence"></div></div>
+<div id="tab-rules" hidden><p>检查所有资格条件、逻辑关系、申报时间和附件后再复核。无法判断的条件保留 manual；缺失证据时保留 partial。</p>
+<label>结构化条款 JSON<textarea id="draft" rows="23" spellcheck="false"></textarea></label><div class="review-meta"><label>复核人<input id="reviewer" placeholder="姓名"></label><label>复核说明<input id="review-note" placeholder="说明查阅了哪些条款，或仍有哪些缺口"></label></div><button id="review" class="primary">保存复核版本</button></div>
+<div id="tab-history" hidden><div id="history"></div></div>
+</div></section></div></section>
+<footer><span id="model-status"></span> · 可推进仍需准备材料并按主管部门要求申报 · 未接入申报提交</footer>
+</main></body></html>

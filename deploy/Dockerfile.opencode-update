@@ -1,0 +1,8 @@
+# Fast release path when uv.lock, Chromium and OpenCode versions are unchanged.
+# Canonical clean build: deploy/Dockerfile.opencode.
+ARG POLICY_RELEASE=v0.3.0-server-20260926-r5
+FROM juzi-opportunity:${POLICY_RELEASE} AS app
+FROM juzi-opencode:v0.2.0-server-20260924-r4
+COPY --from=app /app /app
+COPY deploy/opencode/ /opt/research/
+COPY deploy/opencode_start.py /app/scripts/opencode_start.py

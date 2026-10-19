@@ -1,0 +1,23 @@
+# Runtime data, evidence and backups stay on the server
+runtime/
+incoming/
+deploy/data/
+deploy/data-*/
+deploy/research/
+deploy/backups/
+
+# Secrets and per-server configuration
+deploy/secrets/
+deploy/.env
+deploy/.env.*
+!deploy/.env.example
+deploy/base-config.json
+
+# Local environment
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+._*
+.DS_Store

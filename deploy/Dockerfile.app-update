@@ -1,0 +1,6 @@
+# Incremental release path. Only use when pyproject.toml and uv.lock dependencies
+# match r4; the canonical clean build is deploy/Dockerfile.
+FROM juzi-opportunity:v0.2.0-server-20260924-r4
+COPY src/compute_policy /app/src/compute_policy
+COPY src/compute_policy /app/.venv/lib/python3.12/site-packages/compute_policy
+COPY README.md /app/README.md

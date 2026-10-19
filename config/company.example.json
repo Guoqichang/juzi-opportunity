@@ -1,0 +1,12 @@
+{
+  "name": "句子互动",
+  "expected_version": 1,
+  "facts": {
+    "registered_district": {"value": null, "status": "unknown", "evidence": ""},
+    "eligible_compute_spend_cny": {"value": null, "status": "unknown", "evidence": ""},
+    "sme_qualified": {"value": null, "status": "unknown", "evidence": ""},
+    "staff_count": {"value": null, "status": "unknown", "evidence": ""},
+    "annual_revenue_cny": {"value": null, "status": "unknown", "evidence": ""},
+    "assets_cny": {"value": null, "status": "unknown", "evidence": ""}
+  }
+}

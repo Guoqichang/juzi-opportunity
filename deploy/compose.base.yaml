@@ -1,0 +1,47 @@
+services:
+  web:
+    environment:
+      POLICY_BASE_CONFIG: /app/base-config.json
+      POLICY_EXTRACTION_ENABLED: "1"
+    volumes:
+      - ./base-config.json:/app/base-config.json:ro
+  worker:
+    environment:
+      POLICY_BROWSER_URL: http://opencode:4097
+      POLICY_MODEL_CONFIG_FILE: /run/secrets/extraction-model.json
+      POLICY_EXTRACTION_DAILY_LIMIT: "6"
+    volumes:
+      - ./secrets/extraction-model.json:/run/secrets/extraction-model.json:ro
+  base-sync:
+    image: juzi-base-sync:${POLICY_RELEASE}
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.base
+      args:
+        POLICY_RELEASE: ${POLICY_RELEASE}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=128m,mode=1777
+      - /home/policy:size=64m,mode=0700,uid=10001,gid=10001
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    environment:
+      POLICY_DATA_DIR: /data
+      POLICY_BASE_CONFIG: /app/base-config.json
+    volumes:
+      - ${POLICY_DATA_PATH}:/data
+      - ./base-config.json:/app/base-config.json:ro
+      - ./secrets/lark-app.json:/run/secrets/lark-app.json:ro
+    healthcheck:
+      test: [CMD, python, -c, "import sqlite3,json,datetime; c=sqlite3.connect('file:/data/policy.db?mode=ro',uri=True); r=c.execute('select value from runtime_state where key=?',('base-sync',)).fetchone(); assert r and (datetime.datetime.now(datetime.UTC)-datetime.datetime.fromisoformat(json.loads(r[0])['finished_at'])).total_seconds()<900"]
+      interval: 60s
+      timeout: 5s
+      start_period: 5m
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

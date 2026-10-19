@@ -1,0 +1,14 @@
+ARG POLICY_RELEASE=v0.3.0-server-20260926-r5
+FROM juzi-opportunity:${POLICY_RELEASE}
+USER root
+ADD https://github.com/larksuite/cli/releases/download/v1.0.65/lark-cli-1.0.65-linux-amd64.tar.gz /tmp/lark.tar.gz
+ADD https://github.com/larksuite/cli/releases/download/v1.0.65/checksums.txt /tmp/checksums.txt
+RUN python -c "import hashlib,pathlib; h=hashlib.sha256(pathlib.Path('/tmp/lark.tar.gz').read_bytes()).hexdigest(); expected=next(l.split()[0] for l in pathlib.Path('/tmp/checksums.txt').read_text().splitlines() if l.endswith('lark-cli-1.0.65-linux-amd64.tar.gz')); assert h == expected" \
+    && tar -xzf /tmp/lark.tar.gz -C /tmp \
+    && install /tmp/lark-cli /usr/local/bin/lark-cli \
+    && rm -f /tmp/lark* /tmp/checksums.txt \
+    && mkdir -p /home/policy && chown policy:policy /home/policy
+COPY deploy/base_start.py /app/scripts/base_start.py
+COPY src/compute_policy/base_sync.py /app/.venv/lib/python3.12/site-packages/compute_policy/base_sync.py
+USER 10001:10001
+CMD ["python", "/app/scripts/base_start.py"]
